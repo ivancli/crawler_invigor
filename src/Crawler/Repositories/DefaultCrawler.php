@@ -15,7 +15,14 @@ use Ixudra\Curl\Facades\Curl;
 class DefaultCrawler implements CrawlerContract
 {
     protected $url;
-    protected $content;
+    protected $content = null;
+    protected $status = null;
+    protected $headers = [
+        'Accept-Language: en-us',
+        'User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15',
+        'Connection: Keep-Alive',
+        'Cache-Control: no-cache',
+    ];
 
     /**
      * set target URL
@@ -33,7 +40,14 @@ class DefaultCrawler implements CrawlerContract
      */
     public function fetch()
     {
-        $this->content = Curl::to($this->url)->get();
+        $response = Curl::to($this->url)
+            ->withHeaders($this->headers)
+            ->returnResponseObject()
+            ->get();
+        if (is_object($response)) {
+            $this->setContent($response->content);
+            $this->setStatus($response->status);
+        }
     }
 
     /**
@@ -43,5 +57,34 @@ class DefaultCrawler implements CrawlerContract
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Get request status code
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Update content property
+     * @param $content
+     * @return void
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * Update status property
+     * @param $status
+     * @return void
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 }

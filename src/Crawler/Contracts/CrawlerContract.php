@@ -29,4 +29,24 @@ interface CrawlerContract
      * @return mixed
      */
     public function getContent();
+
+    /**
+     * Get request status code
+     * @return mixed
+     */
+    public function getStatus();
+
+    /**
+     * Update content property
+     * @param $content
+     * @return void
+     */
+    public function setContent($content);
+
+    /**
+     * Update status property
+     * @param $status
+     * @return void
+     */
+    public function setStatus($status);
 }
