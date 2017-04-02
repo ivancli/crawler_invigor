@@ -10,12 +10,10 @@ namespace IvanCLI\Crawler\Repositories;
 
 
 use IvanCLI\Crawler\Contracts\CrawlerContract;
-use IvanCLI\Crawler\Traits\Curler;
+use Ixudra\Curl\Facades\Curl;
 
 class DefaultCrawler implements CrawlerContract
 {
-    use Curler;
-
     protected $url;
     protected $content;
 
@@ -41,8 +39,7 @@ class DefaultCrawler implements CrawlerContract
      */
     public function fetch()
     {
-        $this->setCurlURL($this->url);
-        $this->content = $this->sendCurl();
+        $this->content = Curl::to($this->url)->get();
     }
 
     /**

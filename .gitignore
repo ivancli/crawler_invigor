@@ -1,0 +1,10 @@
+vendor/
+.idea/
+composer.lock
+Would skip repository vendor/doctrine/inflector
+Would skip repository vendor/illuminate/cache
+Would skip repository vendor/illuminate/contracts
+Would skip repository vendor/illuminate/support
+Would skip repository vendor/nesbot/carbon
+Would skip repository vendor/symfony/polyfill-mbstring
+Would skip repository vendor/symfony/translation
