@@ -17,16 +17,10 @@ class DefaultCrawler implements CrawlerContract
     protected $url;
     protected $content;
 
-    public function __construct($url)
-    {
-        $this->setURL($url);
-        $this->fetch();
-    }
-
     /**
      * set target URL
      * @param $url
-     * @return mixed
+     * @return void
      */
     public function setURL($url)
     {
@@ -35,7 +29,7 @@ class DefaultCrawler implements CrawlerContract
 
     /**
      * Load content
-     * @return mixed
+     * @return void
      */
     public function fetch()
     {
