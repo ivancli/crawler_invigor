@@ -42,11 +42,10 @@ class SeleniumCrawler implements CrawlerContract
     protected $content = null;
     protected $status = null;
 
-    public function __construct(RemoteWebDriver $remoteWebDriver, DesiredCapabilities $desiredCapabilities)
+    public function __construct()
     {
-        $this->driver = $remoteWebDriver->create(self::SELENIUM_HOST, $desiredCapabilities->firefox());
+        $this->__initiate();
     }
-
 
     /**
      * set target URL
@@ -115,5 +114,10 @@ class SeleniumCrawler implements CrawlerContract
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    private function __initiate()
+    {
+        $this->driver = RemoteWebDriver::create(self::SELENIUM_HOST, DesiredCapabilities::firefox());
     }
 }
