@@ -87,6 +87,7 @@ class SeleniumCrawler implements CrawlerContract
                 $this->setStatus(200);
                 $this->setContent($content);
             }
+            $this->driver->close();
         }
     }
 
