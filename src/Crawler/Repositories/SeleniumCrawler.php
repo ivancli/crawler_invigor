@@ -17,7 +17,7 @@ use IvanCLI\Crawler\Contracts\CrawlerContract;
  * To install selenium, the easiest way will be using Laravel Selenium package "modelizer/selenium": "^1.2"
  *
  * Running the following code to install Java
- * # sudo apt-get install default-jre
+ * # sudo apt-get install -y xorg xvfb firefox dbus-x11 xfonts-100dpi xfonts-75dpi xfonts-cyrillic
  *
  *
  * Running the following code to install and start firefox and headless driver
