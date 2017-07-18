@@ -147,9 +147,16 @@ class StateBasedCrawler extends DefaultCrawler
             ->get();
 
         if (is_object($response)) {
-            $this->setContent($response->content);
-            $this->setStatus($response->status);
+            if (!is_null($response->content) && !empty($response->content)) {
+                preg_match(self::PRODUCT_REGEX, $response->content, $matches);
+                if (isset($matches[1])) {
+                    $productData = trim($matches[1]);
+                    $productData = str_replace(';', '', $productData);
+                    $this->setContent($productData);
+                    $this->setStatus($response->status);
+                    return $this->content;
+                }
+            }
         }
-        return $this->content;
     }
 }
