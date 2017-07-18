@@ -29,23 +29,23 @@ class StateBasedCrawler extends DefaultCrawler
         $parts = parse_url($this->url);
         parse_str(array_get($parts, 'query'), $query);
         if (array_has($query, 'state')) {
-            switch (array_get($query, 'state')) {
-                case 'NSW':
+            switch (strtolower(array_get($query, 'state'))) {
+                case 'nsw':
                     $this->email = 'nsw.aussiefarmers@gmail.com';
                     break;
-                case 'QLD':
+                case 'qld':
                     $this->email = 'qld.aussiefarmers@gmail.com';
                     break;
-                case 'VIC':
+                case 'vic':
                     $this->email = 'vic.aussiefarmers@gmail.com';
                     break;
-                case 'ACT':
+                case 'act':
                     $this->email = 'act.aussiefarmers@gmail.com';
                     break;
-                case 'WA':
+                case 'wa':
                     $this->email = 'wa.aussiefarmers@gmail.com';
                     break;
-                case 'SA':
+                case 'sa':
                     $this->email = 'sa.aussiefarmers@gmail.com';
                     break;
             }
