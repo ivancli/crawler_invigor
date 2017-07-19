@@ -124,20 +124,20 @@ class StateBasedCrawler extends DefaultCrawler
                                 ->get();
                             sleep(1);
 
-                            $response = Curl::to($this->url)
+                            $newResponse = Curl::to($this->url)
                                 ->withHeaders($this->headers)
                                 ->returnResponseObject()
                                 ->withOption("FOLLOWLOCATION", true)
                                 ->get();
 
-                            if (is_object($response)) {
-                                if (!is_null($response->content) && !empty($response->content)) {
-                                    preg_match(self::PRODUCT_REGEX, $response->content, $matches);
+                            if (is_object($newResponse)) {
+                                if (!is_null($newResponse->content) && !empty($newResponse->content)) {
+                                    preg_match(self::PRODUCT_REGEX, $newResponse->content, $matches);
                                     if (isset($matches[1])) {
                                         $productData = trim($matches[1]);
                                         $productData = str_replace(';', '', $productData);
                                         $this->setContent($productData);
-                                        $this->setStatus($response->status);
+                                        $this->setStatus($newResponse->status);
                                         return $this->content;
                                     }
                                 }
