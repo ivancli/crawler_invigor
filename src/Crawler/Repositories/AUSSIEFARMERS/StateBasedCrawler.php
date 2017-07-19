@@ -117,6 +117,13 @@ class StateBasedCrawler extends DefaultCrawler
                             $this->headers[] = 'Cookie:' . $postData;
 
 
+                            Curl::to($this->url)
+                                ->withHeaders($this->headers)
+                                ->returnResponseObject()
+                                ->withOption("FOLLOWLOCATION", true)
+                                ->get();
+                            sleep(1);
+
                             $response = Curl::to($this->url)
                                 ->withHeaders($this->headers)
                                 ->returnResponseObject()
