@@ -59,93 +59,7 @@ class StateBasedCrawler extends DefaultCrawler
     {
         $this->__setEmail();
         if (!is_null($this->email)) {
-
-            $response = Curl::to($this->url)
-                ->withHeaders($this->headers)
-                ->returnResponseObject()
-                ->withOption("FOLLOWLOCATION", true)
-                ->withOption("HEADER", true)
-                ->get();
-            if (is_object($response)) {
-
-                preg_match_all('/Set-Cookie:(.*?);/', $response->content, $m);
-                if (isset($m[1])) {
-                    $postData = "";
-                    $cookies = $m[1];
-                    $csrfToken = null;
-                    foreach ($cookies as $cookie) {
-                        list($index, $value) = (explode('=', $cookie, 2));
-                        $postData .= "$index=$value;";
-                        if (trim($index) == 'csrftoken') {
-                            $csrfToken = $value;
-                        }
-                    }
-                    $this->headers[] = 'Cookie:' . $postData;
-
-                    if (!is_null($csrfToken)) {
-                        $this->headers [] = "x-csrftoken={$csrfToken}";
-                    }
-
-
-                    $response = Curl::to(self::LOGIN_URL)
-                        ->withHeaders($this->headers)
-                        ->returnResponseObject()
-                        ->withOption("FOLLOWLOCATION", true)
-                        ->withOption("HEADER", true)
-                        ->withData([
-                            "email" => $this->email,
-                            "password" => self::DUMMY_ACCOUNT_PASSWORD,
-                            "remember_me" => false,
-                        ])
-                        ->post();
-
-
-                    if (is_object($response)) {
-
-                        preg_match_all('/Set-Cookie:(.*?);/', $response->content, $m);
-                        if (isset($m[1])) {
-                            $postData = "";
-                            $cookies = $m[1];
-                            $csrfToken = null;
-                            foreach ($cookies as $cookie) {
-                                list($index, $value) = (explode('=', $cookie, 2));
-                                $postData .= "$index=$value;";
-                                if (trim($index) == 'csrftoken') {
-                                    $csrfToken = $value;
-                                }
-                            }
-                            $this->headers[] = 'Cookie:' . $postData;
-
-
-                            Curl::to($this->url)
-                                ->withHeaders($this->headers)
-                                ->returnResponseObject()
-                                ->withOption("FOLLOWLOCATION", true)
-                                ->get();
-                            sleep(1);
-
-                            $newResponse = Curl::to($this->url)
-                                ->withHeaders($this->headers)
-                                ->returnResponseObject()
-                                ->withOption("FOLLOWLOCATION", true)
-                                ->get();
-
-                            if (is_object($newResponse)) {
-                                if (!is_null($newResponse->content) && !empty($newResponse->content)) {
-                                    preg_match(self::PRODUCT_REGEX, $newResponse->content, $matches);
-                                    if (isset($matches[1])) {
-                                        $productData = trim($matches[1]);
-                                        $productData = str_replace(';', '', $productData);
-                                        $this->setContent($productData);
-                                        $this->setStatus($newResponse->status);
-                                        return $this->content;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            $this->loginAndCrawl();
         }
         $response = Curl::to($this->url)
             ->withHeaders($this->headers)
@@ -162,6 +76,107 @@ class StateBasedCrawler extends DefaultCrawler
                     $this->setContent($productData);
                     $this->setStatus($response->status);
                     return $this->content;
+                }
+            }
+        }
+    }
+
+    protected function loginAndCrawl()
+    {
+        $response = Curl::to($this->url)
+            ->withHeaders($this->headers)
+            ->returnResponseObject()
+            ->withOption("FOLLOWLOCATION", true)
+            ->withOption("HEADER", true)
+            ->get();
+        if (is_object($response)) {
+
+            preg_match_all('/Set-Cookie:(.*?);/', $response->content, $m);
+            if (isset($m[1])) {
+                $postData = "";
+                $cookies = $m[1];
+                $csrfToken = null;
+                foreach ($cookies as $cookie) {
+                    list($index, $value) = (explode('=', $cookie, 2));
+                    $postData .= "$index=$value;";
+                    if (trim($index) == 'csrftoken') {
+                        $csrfToken = $value;
+                    }
+                }
+                $this->headers[] = 'Cookie:' . $postData;
+
+                if (!is_null($csrfToken)) {
+                    $this->headers [] = "x-csrftoken={$csrfToken}";
+                }
+
+
+                $response = Curl::to(self::LOGIN_URL)
+                    ->withHeaders($this->headers)
+                    ->returnResponseObject()
+                    ->withOption("FOLLOWLOCATION", true)
+                    ->withOption("HEADER", true)
+                    ->withData([
+                        "email" => $this->email,
+                        "password" => self::DUMMY_ACCOUNT_PASSWORD,
+                        "remember_me" => false,
+                    ])
+                    ->post();
+
+
+                if (is_object($response)) {
+
+                    preg_match_all('/Set-Cookie:(.*?);/', $response->content, $m);
+                    if (isset($m[1])) {
+                        $postData = "";
+                        $cookies = $m[1];
+                        $csrfToken = null;
+                        foreach ($cookies as $cookie) {
+                            list($index, $value) = (explode('=', $cookie, 2));
+                            $postData .= "$index=$value;";
+                            if (trim($index) == 'csrftoken') {
+                                $csrfToken = $value;
+                            }
+                        }
+                        $this->headers[] = 'Cookie:' . $postData;
+
+
+                        Curl::to($this->url)
+                            ->withHeaders($this->headers)
+                            ->returnResponseObject()
+                            ->withOption("FOLLOWLOCATION", true)
+                            ->get();
+                        sleep(1);
+
+                        $newResponse = Curl::to($this->url)
+                            ->withHeaders($this->headers)
+                            ->returnResponseObject()
+                            ->withOption("FOLLOWLOCATION", true)
+                            ->get();
+
+                        if (is_object($newResponse)) {
+                            if (!is_null($newResponse->content) && !empty($newResponse->content)) {
+                                preg_match(self::PRODUCT_REGEX, $newResponse->content, $matches);
+                                if (isset($matches[1])) {
+                                    $productData = trim($matches[1]);
+                                    $productData = str_replace(';', '', $productData);
+
+                                    if (!is_null($this->content) && !empty($this->content)) {
+                                        $productInfo = json_decode($this->content);
+                                        if (!is_null($productInfo) && json_last_error() === JSON_ERROR_NONE) {
+                                            if (isset($productInfo->userState) && $productInfo->userState == "NOT_LOGGED_IN") {
+                                                $this->loginAndCrawl();
+                                                return $this->content;
+                                            }
+                                        }
+                                    }
+
+                                    $this->setContent($productData);
+                                    $this->setStatus($newResponse->status);
+                                    return $this->content;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
