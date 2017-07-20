@@ -155,7 +155,7 @@ class StateBasedCrawler extends DefaultCrawler
                                     $productData = str_replace(';', '', $productData);
 
                                     if (!is_null($this->content) && !empty($this->content)) {
-                                        $productInfo = json_decode($this->content);
+                                        $productInfo = json_decode($productData);
                                         if (!is_null($productInfo) && json_last_error() === JSON_ERROR_NONE) {
                                             if (!isset($productInfo->userState) || $productInfo->userState != "IS_LOGGED_IN") {
                                                 sleep(1);
