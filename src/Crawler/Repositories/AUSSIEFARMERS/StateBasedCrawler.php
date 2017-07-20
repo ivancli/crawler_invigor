@@ -157,7 +157,7 @@ class StateBasedCrawler extends DefaultCrawler
                                     if (!is_null($this->content) && !empty($this->content)) {
                                         $productInfo = json_decode($this->content);
                                         if (!is_null($productInfo) && json_last_error() === JSON_ERROR_NONE) {
-                                            if (isset($productInfo->userState) && $productInfo->userState == "NOT_LOGGED_IN") {
+                                            if (!isset($productInfo->userState) || $productInfo->userState != "IS_LOGGED_IN") {
                                                 sleep(1);
                                                 $this->loginAndCrawl();
                                                 return $this->content;
