@@ -20,6 +20,13 @@ class StateBasedCrawler extends DefaultCrawler
     protected $accessToken;
     protected $accessTokenRepo;
 
+    protected $secondHeaders = [
+        'Accept-Language: en-us',
+        'User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15',
+        'Connection: Keep-Alive',
+        'Cache-Control: no-cache',
+    ];
+
     protected $email;
     const DUMMY_ACCOUNT_PASSWORD = 'S0lutions';
 
@@ -127,28 +134,15 @@ class StateBasedCrawler extends DefaultCrawler
 
                     preg_match_all('/Set-Cookie:(.*?);/', $response->content, $m);
                     if (isset($m[1])) {
-                        $postData = "";
                         $cookies = $m[1];
-                        $csrfToken = null;
                         foreach ($cookies as $cookie) {
                             list($index, $value) = (explode('=', $cookie, 2));
                             $postData .= "$index=$value;";
-                            if (trim($index) == 'csrftoken') {
-                                $csrfToken = $value;
-                            }
                         }
-                        $this->headers[] = 'Cookie:' . $postData;
-
-
-                        Curl::to($this->url)
-                            ->withHeaders($this->headers)
-                            ->returnResponseObject()
-                            ->withOption("FOLLOWLOCATION", true)
-                            ->get();
-                        sleep(1);
+                        $this->secondHeaders[] = 'Cookie:' . $postData;
 
                         $newResponse = Curl::to($this->url)
-                            ->withHeaders($this->headers)
+                            ->withHeaders($this->secondHeaders)
                             ->returnResponseObject()
                             ->withOption("FOLLOWLOCATION", true)
                             ->get();
