@@ -30,6 +30,8 @@ class StateBasedCrawler extends DefaultCrawler
     protected $email;
     const DUMMY_ACCOUNT_PASSWORD = 'S0lutions';
 
+    protected $count = 0;
+
 
     private function __setEmail()
     {
@@ -90,6 +92,7 @@ class StateBasedCrawler extends DefaultCrawler
 
     protected function loginAndCrawl()
     {
+        $this->count++;
         $response = Curl::to($this->url)
             ->withHeaders($this->headers)
             ->returnResponseObject()
@@ -157,9 +160,11 @@ class StateBasedCrawler extends DefaultCrawler
                                     $productInfo = json_decode($productData);
                                     if (!is_null($productInfo) && json_last_error() === JSON_ERROR_NONE) {
                                         if (!isset($productInfo->userState) || $productInfo->userState != "IS_LOGGED_IN") {
-                                            sleep(1);
-                                            $this->loginAndCrawl();
-                                            return $this->content;
+                                            if ($this->count < 20) {
+                                                sleep(1);
+                                                $this->loginAndCrawl();
+                                                return $this->content;
+                                            }
                                         }
                                     }
 
