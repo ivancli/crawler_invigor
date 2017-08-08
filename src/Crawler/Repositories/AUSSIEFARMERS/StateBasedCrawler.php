@@ -40,22 +40,28 @@ class StateBasedCrawler extends DefaultCrawler
         if (array_has($query, 'state')) {
             switch (strtolower(array_get($query, 'state'))) {
                 case 'nsw':
-                    $this->email = 'nsw.aussiefarmers@gmail.com';
+                    $this->url = str_replace('state=nsw', 'op=3', $this->url);
+//                    $this->email = 'nsw.aussiefarmers@gmail.com';
                     break;
                 case 'qld':
-                    $this->email = 'qld.aussiefarmers@gmail.com';
+                    $this->url = str_replace('state=qld', 'op=2', $this->url);
+//                    $this->email = 'qld.aussiefarmers@gmail.com';
                     break;
                 case 'vic':
-                    $this->email = 'vic.aussiefarmers@gmail.com';
+//                    $this->email = 'vic.aussiefarmers@gmail.com';
+                    $this->url = str_replace('state=vic', 'op=1', $this->url);
                     break;
                 case 'act':
-                    $this->email = 'act.aussiefarmers@gmail.com';
+//                    $this->email = 'act.aussiefarmers@gmail.com';
+                    $this->url = str_replace('state=act', 'op=5', $this->url);
                     break;
                 case 'wa':
-                    $this->email = 'wa.aussiefarmers@gmail.com';
+//                    $this->email = 'wa.aussiefarmers@gmail.com';
+                    $this->url = str_replace('state=wa', 'op=4', $this->url);
                     break;
                 case 'sa':
-                    $this->email = 'sa.aussiefarmers@gmail.com';
+//                    $this->email = 'sa.aussiefarmers@gmail.com';
+                    $this->url = str_replace('state=sa', 'op=6', $this->url);
                     break;
             }
         }
