@@ -20,6 +20,8 @@ class ProductListCrawler implements CrawlerContract
 {
     protected $legsListAPI = "https://srv.wego.com/v2/metasearch/flights/searches?currencyCode=KWD&locale=en";
 
+    protected $count = 0;
+
     protected $url;
     protected $content = null;
     protected $status = null;
@@ -46,6 +48,7 @@ class ProductListCrawler implements CrawlerContract
      */
     public function fetch()
     {
+        $this->count++;
         $url = $this->url;
 
         $segments = explode('/', $url);
@@ -107,7 +110,7 @@ class ProductListCrawler implements CrawlerContract
             $this->__sendOptionsRequest('https://secure.wego.com/analytics/v2/flights/searches');
 
             $newResponseContent = $this->__sendPostRequest('https://srv.wego.com/v2/metasearch/flights/searches?currencyCode=KWD&locale=en', $searchRequestData);
-            if ($newResponseContent->count < 300) {
+            if ($newResponseContent->count < 300 && $this->count < 5) {
                 $this->fetch();
                 return;
             }
