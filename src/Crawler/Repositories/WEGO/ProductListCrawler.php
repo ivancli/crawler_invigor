@@ -21,6 +21,7 @@ class ProductListCrawler implements CrawlerContract
     protected $legsListAPI = "https://srv.wego.com/v2/metasearch/flights/searches?currencyCode=KWD&locale=en";
 
     protected $count = 0;
+    protected $resultCount = 0;
 
     protected $url;
     protected $content = null;
@@ -73,11 +74,12 @@ class ProductListCrawler implements CrawlerContract
 
         $searchRequestData = new \stdClass();
         $searchRequestData->search = new \stdClass();
-        $searchRequestData->offset = 0;
+        $searchRequestData->offset = $this->resultCount;
         $searchRequestData->paymentMethodIds = [97];
         $searchRequestData->providerTypes = [];
         $searchRequestData->search->cabin = $class;
         $searchRequestData->search->deviceType = "DESKTOP";
+        $searchRequestData->search->appType = "WEB_APP";
         $searchRequestData->search->userLoggedIn = false;
         $searchRequestData->search->adultsCount = $adultCount;
         $searchRequestData->search->childrenCount = $childCount;
@@ -111,7 +113,8 @@ class ProductListCrawler implements CrawlerContract
             $this->__sendOptionsRequest('https://secure.wego.com/analytics/v2/flights/searches');
 
             $newResponseContent = $this->__sendPostRequest('https://srv.wego.com/v2/metasearch/flights/searches?currencyCode=KWD&locale=en', $searchRequestData);
-            if ($newResponseContent->count < 300 && $this->count < 5) {
+            $this->resultCount += $newResponseContent->count;
+            if ($this->count < 5) {
                 $this->fetch();
                 return;
             }
