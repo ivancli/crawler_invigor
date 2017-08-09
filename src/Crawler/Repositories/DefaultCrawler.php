@@ -17,6 +17,10 @@ class DefaultCrawler implements CrawlerContract
     protected $url;
     protected $content = null;
     protected $status = null;
+
+    protected $ip = null;
+    protected $port = null;
+
     protected $headers = [
         'Accept-Language: en-us',
         'User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15',
@@ -32,6 +36,17 @@ class DefaultCrawler implements CrawlerContract
     public function setURL($url)
     {
         $this->url = $url;
+    }
+
+    /**
+     * Set proxy IP address
+     * @param $ip
+     * @param null $port
+     */
+    public function setProxy($ip, $port = null)
+    {
+        $this->ip = $ip;
+        $this->port = $port;
     }
 
     /**

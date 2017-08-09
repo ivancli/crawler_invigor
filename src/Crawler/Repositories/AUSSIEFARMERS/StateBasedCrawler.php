@@ -76,11 +76,22 @@ class StateBasedCrawler extends DefaultCrawler
         if (!is_null($this->email)) {
             $this->loginAndCrawl();
         }
-        $response = Curl::to($this->url)
-            ->withHeaders($this->headers)
-            ->returnResponseObject()
-            ->withOption("FOLLOWLOCATION", true)
-            ->get();
+
+        if (!is_null($this->ip)) {
+            $response = Curl::to($this->url)
+                ->withHeaders($this->headers)
+                ->withOption('PROXY', "203.219.111.2")
+                ->withOption('PROXYPORT', "3128")
+                ->returnResponseObject()
+                ->withOption("FOLLOWLOCATION", true)
+                ->get();
+        } else {
+            $response = Curl::to($this->url)
+                ->withHeaders($this->headers)
+                ->returnResponseObject()
+                ->withOption("FOLLOWLOCATION", true)
+                ->get();
+        }
 
         if (is_object($response)) {
             if (!is_null($response->content) && !empty($response->content)) {
@@ -124,7 +135,6 @@ class StateBasedCrawler extends DefaultCrawler
                 if (!is_null($csrfToken)) {
                     $this->headers [] = "x-csrftoken={$csrfToken}";
                 }
-
 
                 $response = Curl::to(self::LOGIN_URL)
                     ->withHeaders($this->headers)
