@@ -63,6 +63,7 @@ class ProductListCrawler implements CrawlerContract
         list($departureCode, $arrivalCode) = explode('-', $depArrSegment);
 
         $departureCode = str_replace('c', '', $departureCode);
+        $arrivalCode = str_replace('c', '', $arrivalCode);
 
         list($adultCount, $childCount, $infantCount) = explode(":", $lastSegment);
 
