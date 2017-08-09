@@ -103,8 +103,11 @@ class ProductListCrawler implements CrawlerContract
             $id = $content->search->id;
             $searchRequestData->search->id = $id;
 
+            $this->__sendGetRequest('https://secure.wego.com/analytics/context');
+            $this->__sendOptionsRequest('https://secure.wego.com/analytics/v2/flights/searches');
+
             $newResponseContent = $this->__sendPostRequest('https://srv.wego.com/v2/metasearch/flights/searches?currencyCode=KWD&locale=en', $searchRequestData);
-            if ($newResponseContent->count === 0) {
+            if ($newResponseContent->count < 300) {
                 $this->fetch();
                 return;
             }
@@ -165,6 +168,8 @@ class ProductListCrawler implements CrawlerContract
     {
         $response = Curl::to($url)
             ->asJson()
+            ->setCookieFile(storage_path('cookie/wego'))
+            ->setCookieJar(storage_path('cookie/wego'))
             ->returnResponseObject()
             ->get();
         if ($response->status === 200) {
@@ -177,10 +182,31 @@ class ProductListCrawler implements CrawlerContract
         $response = Curl::to($url)
             ->withData($data)
             ->asJson()
+            ->setCookieFile(storage_path('cookie/wego'))
+            ->setCookieJar(storage_path('cookie/wego'))
             ->returnResponseObject()
             ->post();
         if ($response->status === 200) {
             return $response->content;
         }
+    }
+
+    private function __sendOptionsRequest($url)
+    {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "OPTIONS");
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
+        $buffer = curl_exec($ch);
+        curl_close($ch);
+
+        unset($ch);
+        return $buffer;
     }
 }
