@@ -80,8 +80,8 @@ class StateBasedCrawler extends DefaultCrawler
         if (!is_null($this->ip)) {
             $response = Curl::to($this->url)
                 ->withHeaders($this->headers)
-                ->withOption('PROXY', "203.219.111.2")
-                ->withOption('PROXYPORT', "3128")
+                ->withOption('PROXY', $this->ip)
+                ->withOption('PROXYPORT', $this->port)
                 ->returnResponseObject()
                 ->withOption("FOLLOWLOCATION", true)
                 ->get();
