@@ -55,11 +55,23 @@ class DefaultCrawler implements CrawlerContract
      */
     public function fetch()
     {
-        $response = Curl::to($this->url)
-            ->withHeaders($this->headers)
-            ->returnResponseObject()
-            ->withOption("FOLLOWLOCATION", true)
-            ->get();
+        if (!is_null($this->ip)) {
+            $response = Curl::to($this->url)
+                ->withHeaders($this->headers)
+                ->withOption('PROXY', $this->ip)
+                ->withOption('PROXYPORT', $this->port)
+                ->returnResponseObject()
+                ->withOption("FOLLOWLOCATION", true)
+                ->get();
+        } else {
+            $response = Curl::to($this->url)
+                ->withHeaders($this->headers)
+                ->returnResponseObject()
+                ->withOption("FOLLOWLOCATION", true)
+                ->get();
+        }
+
+
         if (is_object($response)) {
             $this->setContent($response->content);
             $this->setStatus($response->status);
